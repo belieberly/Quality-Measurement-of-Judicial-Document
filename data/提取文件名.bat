@@ -1,0 +1,1 @@
+dir /b >path.txt
