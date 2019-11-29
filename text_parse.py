@@ -54,25 +54,25 @@ def split_txt(doc_txt: list):
             flag_list[i].append('pagename')
         if (re.match(r'^发布日期：.*浏览：[0-9]*次$', doc_txt[i])):
             flag_list[i].append('information')
-        if (re.match(r'.*法院$', doc_txt[i]) and len(doc_txt[i] )< 30):
+        if (re.match(r'.*法院$', doc_txt[i]) and len(doc_txt[i]) < 20):
             flag_list[i].append('title.court_name')
-        if (re.match(r'民[\s]?事[\s]?判[\s]?决[\s]?书', doc_txt[i])):
+        if (re.match(r'^民[\s]?事[\s]?判[\s]?决[\s]?书[\s]?$', doc_txt[i])):
             flag_list[i].append('title.doc_type')
         if (re.match(r'（[0-9]{4}）[\w\u4e00-\u9fcc]?[0-9]+[\w\u4e00-\u9fcc]{2}[0-9]+号', doc_txt[i])):
             flag_list[i].append('title.doc_num')
-        if (re.match(r'^(原告|被告|负责人|委托诉讼代理人|负责人)', doc_txt[i])):
+        if (re.match(r'^(原告|被告|负责人|委托诉讼代理人|负责人|上诉人|被上诉人)(?!.*本案现已(审理)*(终结)*).*', doc_txt[i])):
             flag_list[i].append('head.basic_situation')
         if (re.match(r'原告[\w\u4e00-\u9fcc]+与被告[\w\u4e00-\u9fcc]+.*本院.*本案现已审理终结。$', doc_txt[i])):
             flag_list[i].append('head.summary')
-        if (re.match(r'^原告[\w\u4e00-\u9fcc]*(诉称|称|请求)*判.*请求.*', doc_txt[i])):
+        if (re.match(r'^原告[\w\u4e00-\u9fcc]*(诉称|称|请求)*.*被告(?!.*本案现已(审理)*(终结)*).*', doc_txt[i])):
             flag_list[i].append('facts.yuangao')
         if (re.match(r'^被告[\w\u4e00-\u9fcc]*(未到庭|未[\w\u4e00-\u9fcc]*提交书面答辩|辩称)', doc_txt[i])):
             flag_list[i].append('facts.beigao')
-        if (re.search(r'经[\w\u4e00-\u9fcc]*审理查明', doc_txt[i])):
+        if (re.search(r'(经[\w\u4e00-\u9fcc]*审理查明|另查明)', doc_txt[i])):
             flag_list[i].append('facts.fayuan')
-        if (re.match(r'本院认为', doc_txt[i])):
+        if (re.match(r'^[\w\u4e00-\u9fcc]{0,5}本院认为', doc_txt[i])):
             flag_list[i].append('analysis')
-        if (re.search(r'依照.*[第.*条]+', doc_txt[i])):
+        if (re.search(r'依照.*[第.*条]+.*判决如下.*', doc_txt[i])):
             flag_list[i].append('law_dependence')
         if (re.match(r'^上述具有履行内容的条款，均于本判决生效之日起[\w\u4e00-\u9fcc]+内履行', doc_txt[i])):
             flag_list[i].append('verdict')
@@ -82,8 +82,15 @@ def split_txt(doc_txt: list):
             flag_list[i].append('tail.charge')
         if (re.match(r'^如不服本判决，可在判决书送达之日起十五日内，向本院递交上诉状，并按[\w\u4e00-\u9fcc]+提出副本，上诉于', doc_txt[i])):
             flag_list[i].append('tail.notification')
+        if (re.match(r'^(审[\s]?判[\s]?长[\s]?|人民陪审员|书[\s]?记[\s]?员[\s]?|法官助理)', doc_txt[i])):
+            flag_list[i].append('inscription.person')
+        if (re.match(r'^[一二三四五六七八九十〇]{4}年[一二三四五六七八九十〇]{1,2}月[一二三四五六七八九十〇]{1,2}日', doc_txt[i])):
+            flag_list[i].append('inscription.record_date')
+        if (re.match(r'^附.*法律', doc_txt[i])):
+            flag_list[i].append('appendix')
 
     print(zip(doc_txt, flag_list))
 
 
 split_txt(text1)
+#split_txt(text2)
